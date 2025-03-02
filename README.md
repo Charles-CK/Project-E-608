@@ -33,11 +33,6 @@ Here are some useful resources related to the project:
 - **Accurate, Synced Captions**: The transcription process includes timestamps to create precise captions that align with the audio and video content. The ability to edit the transcript ensures captions are accurate and well-synced.
 - **User-Friendly Tool**: The application provides a clean and intuitive GUI, making it easy for users to transcribe audio, edit captions, and embed them into video files.
 
-## Diagrams
-
-- **Deployment Diagram**: Illustrates the structure of the system and how the components interact.
-- **Project E608 Program Diagram**: Provides a visual overview of the application's flow and key processes.
-
 ## Goals
 
 ### 1. Audio Transcription
