@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace E_CC
@@ -23,6 +19,25 @@ namespace E_CC
                 {
                     // Get the path of specified file
                     return openFileDialog.FileName;
+                }
+            }
+            return null;
+        }
+
+        public string GetSaveFilePath()
+        {
+            // Allows the user to pick a save location through the file explorer
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+            {
+                saveFileDialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
+                saveFileDialog.DefaultExt = "txt";
+                saveFileDialog.AddExtension = true;
+                saveFileDialog.Title = "Select Output File Location";
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    // Get the path of the specified save location
+                    return saveFileDialog.FileName;
                 }
             }
             return null;

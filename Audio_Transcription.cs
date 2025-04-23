@@ -5,28 +5,47 @@ using E_CC;  // for your FilePath class
 
 namespace Audio_Transcription
 {
-    //Right now this is a test class just to get a .txt with time codes for testing
-    class Audio_Transcription
+    // Updated class to generate time codes in the desired format
+    class Audio_Transcription1
     {
         public void GenerateTimeCodes()
         {
-            // Prepare the output .txt file on desktop
-            string desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            string outputTxtPath = Path.Combine(desktop, "TimeCodesOutput.txt");
+            FilePath filePath = new FilePath();
+
+            // Let the user pick the output file location
+            string outputTxtPath = filePath.GetSaveFilePath();
+            if (string.IsNullOrEmpty(outputTxtPath))
+            {
+                Console.WriteLine("No output file selected. Operation canceled.");
+                return;
+            }
 
             // Generate time codes for 5 minutes
             StringBuilder sb = new StringBuilder();
             TimeSpan duration = TimeSpan.FromMinutes(5);
-            TimeSpan interval = TimeSpan.FromSeconds(1); // 1-second intervals
+            TimeSpan interval = TimeSpan.FromSeconds(2); // 2-second intervals
+            int index = 1;
 
             for (TimeSpan ts = TimeSpan.Zero; ts < duration; ts += interval)
             {
-                sb.AppendLine(FormatTime(ts));
+                TimeSpan endTime = ts + interval;
+
+                // Add index
+                sb.AppendLine(index.ToString());
+
+                // Add time range
+                sb.AppendLine($"{FormatTime(ts)} --> {FormatTime(endTime)}");
+
+                // Add placeholder text
                 sb.AppendLine("This is a test");
+
+                // Add an empty line for separation
                 sb.AppendLine();
+
+                index++;
             }
 
-            // Write the output to a .txt file on the desktop
+            // Write the output to the selected file
             File.WriteAllText(outputTxtPath, sb.ToString());
             Console.WriteLine($"Time codes saved to: {outputTxtPath}");
         }
@@ -38,4 +57,3 @@ namespace Audio_Transcription
         }
     }
 }
-

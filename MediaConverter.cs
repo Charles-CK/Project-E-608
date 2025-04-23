@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Windows.Forms;
 
 namespace E_CC
 {
@@ -14,79 +13,78 @@ namespace E_CC
             filePath = new FilePath();
         }
 
-        public void ConvertMp4ToMp3ToWav()
+        /// <summary>
+        /// Converts an MP4 file to MP3 format.
+        /// </summary>
+        public void ConvertMp4ToMp3()
         {
+            // Let the user pick the input MP4 file
             string mp4Path = filePath.GetFilePath();
-            if (string.IsNullOrEmpty(mp4Path) || !mp4Path.EndsWith(".mp4"))
+            if (string.IsNullOrEmpty(mp4Path) || !mp4Path.EndsWith(".mp4", StringComparison.OrdinalIgnoreCase))
             {
                 Console.WriteLine("Invalid MP4 file path.");
                 return;
             }
 
-            string outputFolder = GetOutputFolderPath();
-            if (string.IsNullOrEmpty(outputFolder))
+            // Let the user pick the output MP3 file location
+            string mp3Path = filePath.GetSaveFilePath();
+            if (string.IsNullOrEmpty(mp3Path))
             {
-                Console.WriteLine("Invalid output folder path.");
+                Console.WriteLine("No output file selected. Operation canceled.");
                 return;
             }
 
-            string mp3Path = Path.Combine(outputFolder, Path.GetFileNameWithoutExtension(mp4Path) + ".mp3");
-            string wavPath = Path.Combine(outputFolder, Path.GetFileNameWithoutExtension(mp4Path) + ".wav");
+            // Ensure the file has an .mp3 extension
+            if (!mp3Path.EndsWith(".mp3", StringComparison.OrdinalIgnoreCase))
+            {
+                mp3Path = Path.ChangeExtension(mp3Path, ".mp3");
+            }
 
             // Convert MP4 to MP3
             RunFFmpegCommand($"-i \"{mp4Path}\" \"{mp3Path}\"");
-
-            // Convert MP3 to WAV in PCM 16-bit, mono, 16kHz
-            RunFFmpegCommand($"-i \"{mp3Path}\" -ac 1 -ar 16000 -sample_fmt s16 \"{wavPath}\"");
-
-            Console.WriteLine($"Conversion complete: {wavPath}");
+            Console.WriteLine($"MP3 file created: {mp3Path}");
         }
 
-        public void ConvertMovToMp3ToWav()
+        /// <summary>
+        /// Converts an MP4 file to WAV format.
+        /// </summary>
+        public void ConvertMp4ToWav()
         {
-            string movPath = filePath.GetFilePath();
-            if (string.IsNullOrEmpty(movPath) || !movPath.EndsWith(".mov"))
+            // Let the user pick the input MP4 file
+            string mp4Path = filePath.GetFilePath();
+            if (string.IsNullOrEmpty(mp4Path) || !mp4Path.EndsWith(".mp4", StringComparison.OrdinalIgnoreCase))
             {
-                Console.WriteLine("Invalid MOV file path.");
+                Console.WriteLine("Invalid MP4 file path.");
                 return;
             }
 
-            string outputFolder = GetOutputFolderPath();
-            if (string.IsNullOrEmpty(outputFolder))
+            // Let the user pick the output WAV file location
+            string wavPath = filePath.GetSaveFilePath();
+            if (string.IsNullOrEmpty(wavPath))
             {
-                Console.WriteLine("Invalid output folder path.");
+                Console.WriteLine("No output file selected. Operation canceled.");
                 return;
             }
 
-            string mp3Path = Path.Combine(outputFolder, Path.GetFileNameWithoutExtension(movPath) + ".mp3");
-            string wavPath = Path.Combine(outputFolder, Path.GetFileNameWithoutExtension(movPath) + ".wav");
-
-            // Convert MOV to MP3
-            RunFFmpegCommand($"-i \"{movPath}\" \"{mp3Path}\"");
-
-            // Convert MP3 to WAV in PCM 16-bit, mono, 16kHz
-            RunFFmpegCommand($"-i \"{mp3Path}\" -ac 1 -ar 16000 -sample_fmt s16 \"{wavPath}\"");
-
-            Console.WriteLine($"Conversion complete: {wavPath}");
-        }
-
-        private string GetOutputFolderPath()
-        {
-            using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
+            // Ensure the file has a .wav extension
+            if (!wavPath.EndsWith(".wav", StringComparison.OrdinalIgnoreCase))
             {
-                if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
-                {
-                    return folderBrowserDialog.SelectedPath;
-                }
+                wavPath = Path.ChangeExtension(wavPath, ".wav");
             }
-            return null;
+
+            // Convert MP4 to WAV in PCM 16-bit, mono, 16kHz
+            RunFFmpegCommand($"-i \"{mp4Path}\" -ac 1 -ar 16000 -sample_fmt s16 \"{wavPath}\"");
+            Console.WriteLine($"WAV file created: {wavPath}");
         }
 
+        /// <summary>
+        /// Runs an FFmpeg command with the specified arguments.
+        /// </summary>
+        /// <param name="arguments">The FFmpeg command arguments.</param>
         private void RunFFmpegCommand(string arguments)
         {
             ProcessStartInfo startInfo = new ProcessStartInfo
             {
-                // Corrected to "FFmpeg" (the official spelling)
                 FileName = "FFmpeg",
                 Arguments = arguments,
                 RedirectStandardOutput = true,
@@ -106,3 +104,4 @@ namespace E_CC
         }
     }
 }
+

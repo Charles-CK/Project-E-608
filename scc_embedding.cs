@@ -4,6 +4,9 @@ using E_CC;  // for your FilePath class
 
 namespace E_CC
 {
+    /// <summary>
+    /// Class to embed SCC captions into a video file.
+    /// </summary>
     class scc_embedding
     {
         public void EmbedSccIntoVideo()

@@ -5,8 +5,14 @@ using System.Text;
 
 namespace E_CC
 {
+    /// <summary>
+    /// Class to convert a .txt file to .scc format.
+    /// </summary>
     class txt_to_scc
     {
+        /// <summary>
+        /// Converts a .txt file to .scc format.
+        /// </summary>
         public void ConvertTxtToScc()
         {
             // Use FilePath object to let the user pick the .txt file
@@ -19,9 +25,19 @@ namespace E_CC
             }
             Console.WriteLine("Selected TXT file: " + txtFilePath);
 
-            // Prepare the output .scc file path on desktop
-            string desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            string sccFilePath = Path.Combine(desktop, "Output.scc");
+            // Let the user pick the output .scc file location
+            string sccFilePath = filePathObj.GetSaveFilePath();
+            if (string.IsNullOrEmpty(sccFilePath))
+            {
+                Console.WriteLine("No output file selected. Operation canceled.");
+                return;
+            }
+
+            // Ensure the file has a .scc extension
+            if (!sccFilePath.EndsWith(".scc", StringComparison.OrdinalIgnoreCase))
+            {
+                sccFilePath = Path.ChangeExtension(sccFilePath, ".scc");
+            }
 
             // Read the .txt file
             string[] lines = File.ReadAllLines(txtFilePath);
