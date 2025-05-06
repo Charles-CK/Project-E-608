@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace E_CC
 {
     /// <summary>
-    /// Class to convert a .txt file to .srt format.
+    /// Class to convert a .txt file to .srt format while ensuring proper formatting.
     /// </summary>
     class TxtToSrtConverter
     {
         /// <summary>
-        /// Converts a .txt file to .srt format.
+        /// Converts a .txt file to .srt format while ensuring proper formatting.
         /// </summary>
         public void ConvertTxtToSrt(string selectedTxtFilePath)
         {
@@ -44,46 +43,39 @@ namespace E_CC
 
             // Prepare the .srt file content
             List<string> srtLines = new List<string>();
-            TimeSpan startTime = TimeSpan.Zero;
-            TimeSpan interval = TimeSpan.FromSeconds(2); // 2-second intervals
             int index = 1;
 
-            foreach (string line in lines)
+            for (int i = 0; i < lines.Length; i++)
             {
-                string srtTimeCode = FormatSrtTimeCode(startTime, startTime + interval);
-                srtLines.Add(index.ToString());
-                srtLines.Add(srtTimeCode);
-                srtLines.Add(line);
-                srtLines.Add(""); // Add an empty line for separation
+                string line = lines[i].Trim();
 
-                startTime += interval;
-                index++;
+                if (string.IsNullOrWhiteSpace(line)) // Skip empty lines
+                    continue;
+
+                if (line.Contains("-->")) // Time code line
+                {
+                    // Add the section number
+                    srtLines.Add(index.ToString());
+                    index++;
+
+                    // Add the time code
+                    srtLines.Add(line);
+
+                    // Add the text (next line)
+                    if (i + 1 < lines.Length && !string.IsNullOrWhiteSpace(lines[i + 1]))
+                    {
+                        srtLines.Add(lines[i + 1].Trim());
+                        i++; // Skip the next line since it's already processed
+                    }
+
+                    // Add an empty line for separation
+                    srtLines.Add("");
+                }
             }
 
             // Write the .srt file
             File.WriteAllLines(srtFilePath, srtLines);
             Console.WriteLine($"SRT file saved to: {srtFilePath}");
-        }
-
-        /// <summary>
-        /// Formats the time code for an .srt file.
-        /// </summary>
-        /// <param name="start"></param>
-        /// <param name="end"></param>
-        /// <returns></returns>
-        private string FormatSrtTimeCode(TimeSpan start, TimeSpan end)
-        {
-            return $"{FormatTime(start)} --> {FormatTime(end)}";
-        }
-
-        /// <summary>
-        /// Formats a TimeSpan object as a string.
-        /// </summary>
-        /// <param name="ts"></param>
-        /// <returns></returns>
-        private string FormatTime(TimeSpan ts)
-        {
-            return ts.ToString(@"hh\:mm\:ss\,fff");
         }
     }
 }
